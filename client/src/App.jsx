@@ -1,25 +1,11 @@
 import './App.css'
 import { useEffect, useState } from 'react'
-import axios from 'axios' // Make sure you've run: npm install axios
+import axios from 'axios'
 
-function logRow({date, hours, acft, comments}) {
-
-  return (
-    <div>
-      <input className='dateInput' type='date'/>
-      <input className='hourInput' placeholder='#' min='0' max='35' type='number'/>
-      <select className='acftInput'>
-        <option value="C150">C150</option>
-        <option value="C172">C172</option>
-        <option value="SR22">SR22</option>
-        <input placeholder='-' className='commentsInput'/>
-      </select>
-    </div>
-  )
-}
 
 function App() {
-  const [newLog, setNewLog] = useState(0)
+  const [logs, setLogs] = useState([])
+  const [buttonText, setButtonText] = useState("Add New Log.");
   const [greeting, setGreeting] = useState("Loading...")
 
   useEffect(() => {
@@ -31,11 +17,43 @@ function App() {
       })
   }, [])
 
+  const AddLogRow = () => {
+    setLogs([...logs, { id: Date.now() }]);
+    setButtonText("New Log Added.");
+    setTimeout(() => {
+      setButtonText("Add New Log");
+    }, 5000);
+    console.log("Added Log.")
+  };
+
+  const DeleteLog = (id) => {
+    setLogs(logs.filter(log => log.id !== id));
+  };
+
+  
+  const RenderLogRow = (log) => {
+    return (
+      <div className='taskRow' key={log.id}>
+        <input className='dateInput' type='date'/>
+        <input className='hourInput' placeholder='#' min='0' max='35' type='number'/>
+        <select className='acftInput'>
+          <option value="C150">C150</option>
+          <option value="C172">C172</option>
+          <option value="SR22">SR22</option>
+          <input placeholder='-' className='commentsInput'/>
+        </select>
+        <input placeholder='-' className='commentsInput'/>
+        <button onClick={() => DeleteLog(log.id)}>Delete</button>
+      </div>
+    );
+  };
+
+  
   return (
     <div>
         <h1 className='titleText'>Flight Log Tracker</h1>
-        <button className='buttonNewText' onClick={() => setNewLog(newLog + 1)}>
-          Added New Tasks: {newLog}
+        <button className='buttonNewText' onClick={AddLogRow}>
+          {buttonText} ({logs.length})
         </button>
         <div className='taskRowContainer'>
           <div className="taskHeader">
@@ -44,16 +62,11 @@ function App() {
             <h2>ACFT Type</h2>
             <h2>Comments</h2>
           </div>
-          <div className='taskRow'>
-            <input className='dateInput' type='date'></input>
-            <input className='hourInput' placeholder='#' min='0' max='35' type='number'></input>
-            <select className='acftInput'>
-              <option value="C150">C150</option>
-              <option value="C172">C172</option>
-              <option value="SR22">SR22</option>
-            </select>
-            <input placeholder='-' className='commentsInput'></input>
-          </div>
+
+          {logs.map((log) => (
+          <div key={log.id}>{RenderLogRow(log)}</div>
+          ))}
+
         </div>
     </div>
   )
