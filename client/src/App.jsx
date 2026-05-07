@@ -53,24 +53,26 @@ function App() {
     setLogs(logs.map(log =>
       log.id === id ? { ...log, [field]: value } : log
     ));
+    console.log("Handled Input Change")
   };
 
   const SaveLog = async (log) => {
     try {
-      const response = await axios.post('http://localhost:5000/api/newLog', log);
-      const savedLog = response.data
-
-      setLogs(logs.map(item => (item.id === log.id ? savedLog : item)));
+      const response = await axios.post('http://localhost:5000/api/newLog', log).then(res => {
+      const savedLog = res.data
+      console.log("Got past variables.")
+        setLogs(logs.map(item => (item.id === log.id ? savedLog : item)));
       setButtonText("Log Saved.");
       setTimeout(() => setButtonText("Add New Log"), 3000);
+      })      
     } catch (err) {
       console.error("Unable to save log:", err);
       alert("Unable to save to datalogs.");
     }
+    console.log("Finished SaveLog")
   };
-
   
-  const RenderLogRow = (log) => {
+  const RenderLogRow = (log) => { // Try to move to outside of app function
     return (
       <div className='taskRow' key={log.id}>
         <input className='dateInput' type='date' value={log.date} onChange={(e) => HandleInputChange(log.id, 'date', e.target.value)}/>
@@ -103,7 +105,7 @@ function App() {
           </div>
 
           {logs.map((log) => (
-          <div key={log.id}>{RenderLogRow(log)}</div>
+          <div key={log.id}>{RenderLogRow(log)}</div> // render each element individually
           ))}
 
         </div>
