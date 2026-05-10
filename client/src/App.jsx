@@ -2,7 +2,6 @@ import './App.css'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-
 function App() {
   const [logs, setLogs] = useState([])
   const [buttonText, setButtonText] = useState("Add New Log.");
@@ -72,7 +71,7 @@ function App() {
     console.log("Finished SaveLog")
   };
   
-  const RenderLogRow = (log) => { // Try to move to outside of app function
+  const RenderLogRow = (log) => {
     return (
       <div className='taskRow' key={log.id}>
         <input className='dateInput' type='date' value={log.date} onChange={(e) => HandleInputChange(log.id, 'date', e.target.value)}/>
@@ -105,7 +104,7 @@ function App() {
           </div>
 
           {logs.map((log) => (
-          <div key={log.id}>{RenderLogRow(log)}</div> // render each element individually
+          <div key={log.id}>{RenderLogRow(log)}</div>
           ))}
 
         </div>
